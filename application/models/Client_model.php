@@ -77,10 +77,10 @@ class Client_model extends CI_Model {
 
 
     public function get_today_completed_jobs($limit, $offset, $jobcode = '', $job_name = '') {
-        $this->db->select('jobcode, client_name,created_at');
+        $this->db->select('jobcode,assignment_type, client_name,created_at');
         $this->db->from('joblist');
         $this->db->where('DATE(completed_date)', date('Y-m-d'));
-        $this->db->where('status', 9);
+        $this->db->where('status', 4);
     
         if ($jobcode) {
             $this->db->like('jobcode', $jobcode);
@@ -99,6 +99,7 @@ class Client_model extends CI_Model {
     public function count_today_completed_jobs($jobcode = '', $job_name = '') {
         $this->db->from('joblist');
         $this->db->where('DATE(completed_date)', date('Y-m-d'));
+        $this->db->where('status', 4);
     
         if ($jobcode) {
             $this->db->like('jobcode', $jobcode);

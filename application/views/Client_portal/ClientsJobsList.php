@@ -254,6 +254,14 @@
 
 	<script>
 
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months start from 0
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+}
+
 $(document).ready(function () {
     let currentTab = "live";
     let currentPage = 1;
@@ -283,13 +291,15 @@ $(document).ready(function () {
                     rows = `<tr><td colspan="7">No data found</td></tr>`;
                 } else {
                     rdata.jobs.forEach(job => {
+                        const jobDate = formatDate(job.created_at); 
+                    
                         rows += `
                             <tr>
                                 <td>${job.jobcode}</td>
                                 <td>${job.job_name}</td>
-                                <td><span class='badge badge-success'>${job.status}</span></td>
+                                <td><span class='badge ${job.badge_color} '>${job.status_name}</span></td>
                                 <td>${job.sub_status}</td>
-                                <td>${job.recieved_on}</td>
+                                <td>${jobDate}</td>
                                 <td>${job.additional_comment}</td>
                                 <td class="actions">
                                     <a href=""><i class="fa fa-search"></i></a>
@@ -301,12 +311,17 @@ $(document).ready(function () {
                 }
 
                 $(`#tabContent-${tabType}`).html(rows);
+                
+                var totalRecords = rdata.total; // e.g. 157
+                var perPage = 20;
+                var totalPages = Math.ceil(totalRecords / perPage);
 
-                // Example pagination (you may build from backend response)
-                $('.pagination').html(`
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                `);
+                let paginationHTML = '';
+                for (let i = 1; i <= totalPages; i++) {
+                    paginationHTML += `<li class="page-item"><a class="page-link" href="#">${i}</a></li>`;
+                }
+
+                $('.pagination').html(paginationHTML);
             },
             error: function () {
                 $(`#tabContent-${tabType}`).html("<tr><td colspan='7'>Error loading data</td></tr>");

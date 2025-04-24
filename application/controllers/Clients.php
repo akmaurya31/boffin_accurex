@@ -289,6 +289,7 @@
             $jobs = $this->Client_model->get_today_completed_jobs($limit, $offset, $job_code, $job_name);
             $total = $this->Client_model->count_today_completed_jobs($job_code, $job_name);
 
+
             foreach ($jobs as &$job) {
                 // print_r($job); die("ASdfas");
                 $job->job_name = $this->generate_job_title(
@@ -296,7 +297,16 @@
                     $job->assignment_type,
                     $job->created_at
                 );
+
+                // $job['job_name'] = $this->generate_job_title(
+                //     $job['client_name'],
+                //     $job['assignment_type'],
+                //     $job['created_at']
+                // );
+
+                
             }
+
         
             echo json_encode([
                 'jobs' => $jobs,
@@ -350,8 +360,12 @@
                     $job['assignment_type'],
                     $job['created_at']
                 );
+                $status_details = get_job_status_details($job['status']);
+                $job['status_name'] = $status_details['status']; // Store the status
+                $job['sub_status'] = $status_details['sub_status']; // Store the sub-status
+                $job['badge_color'] = $status_details['badge_color']; // Store the badge color        
             }
-        
+          
             echo json_encode([
                 'jobs' => $jobs,
                 'total' => $total,
@@ -362,8 +376,18 @@
 
         private function generate_job_title($client_name, $assignment_type, $created_date) {
             $short_type = strtoupper(substr($assignment_type, 0, 3));
+            if ($short_type === 'BOO') {
+                $final_type = 'VAT';
+            } elseif ($short_type === 'PER') {
+                $final_type = 'PTR';
+            } elseif ($short_type === 'YEA') {
+                $final_type = 'YEA';
+            } else {
+                $final_type = 'OTH'; // Or you can set a default value
+            }
+
             $formatted_date = date('d-m-Y', strtotime($created_date));
-            return "{$client_name} - {$short_type} - {$formatted_date}";
+            return "{$client_name}-{$final_type}-{$formatted_date}";
         }
 
 

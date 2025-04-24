@@ -142,6 +142,25 @@
 let currentPage = 1;
 let searchTerm = '';
 
+function loadJobs(page = 1, search = '') {
+    $.ajax({
+        url: "<?= base_url('Clients/fetch_paginated_jobs') ?>",
+        method: 'GET',
+        data: { page: page, limit: 20, search: search },
+        dataType: 'json',
+        success: function (res) {
+			console.log(res,"LLL152");
+            let html = '';
+            res.jobs.forEach(job => {
+                html += `<tr><td>${job.job_code}</td><td>${job.job_name}</td></tr>`;
+            });
+            $('#jobTable tbody').html(html);
+
+            const totalPages = Math.ceil(res.total / 20);
+            renderPagination(totalPages, page);
+        }
+    });
+}
  
 
 function renderPagination(totalPages, currentPage) {
@@ -232,7 +251,7 @@ $(document).ready(function() {
 
 
 <script>
-  let currentPage = 1;
+//   let currentPage = 1;
 
   
   // Search on typing (with delay)
