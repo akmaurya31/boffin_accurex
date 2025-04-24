@@ -144,14 +144,15 @@
 					</div>
 					<div class="form-group" name="year_end" id="year_end" style="display:none">
 						<label>Year End <span>*</span></label>
-						<select class="form-control" name="year_end">
+						<input type="text" class="form-control" name="year_end" id="year_end" placeholder="dd/mm/yyyy" />
+						<!-- <select class="form-control" name="year_end">
 							<option value="2020">2020</option>
 							<option value="2021">2021</option>
 							<option value="2022">2022</option>
 							<option value="2023">2023</option>
 							<option value="2024">2024</option>
 							<option value="2025">2025</option>
-						</select>
+						</select> -->
 						<span class="error-msg"></span>
 
 					</div>
@@ -191,6 +192,9 @@
 						<input type="file" class="form-control" name="attachments[]" multiple accept=".jpeg,.jpg,.png,.webp,.pdf,.doc,.docx,.xls,.xlsx">
 
 						<span style="font-size: 13px; color: #f65d1f;">Total attachement size upto 100 MB</span>
+						<br/>
+						<span style="font-size: 13px; color: #f65d1f;">JPG,JPEG,PNG,XSLS,DOC,PDF,WEBP</span>
+
 					</div>
 					<div class="form-group" id="additiona_comment">
 						<label>Additional Comment <span></span></label>
@@ -625,16 +629,11 @@
 			</div>
 			<div class="col-md-12 text-center mb-3">
 				<button type="submit" class="btn btn-purple customer-form-submiter">Preview</button>
-				<button  class="btn btn-purple" data-toggle="modal" data-target="#jobDetailModal">Preview</button>
-				<!-- <div style="display: flex; align-items: center; gap: 10px;">
-					<button class="btn btn-purple customer-form-submiter" type="submit">Preview</button>
-					<div id="loader" style="display: none;">
-					</div>
-				</div> -->
 				<button  class="btn dismiss">Close</button>
 			</div>
 		</div>
 	<?= form_close(); ?>
+	<div id="loader"></div>
 </div>	
 
 <!-- Start Preview Modal-->
@@ -1004,9 +1003,53 @@
 				`);
 			});
 
+			multipleAttach(formData);
 
+			// Finally show the modal
+			$('#jobDetailModal').modal('show');
+		}
+
+		function multipleAttach(formData){
+			let attachments = formData.getAll('attachments[]'); // Get all file objects
+			const $tbodyattachmentView = $('.attachmentView');
+			$tbodyattachmentView.empty();
+
+			let validAttachments = attachments.filter(file => {
+				// Filter out invalid or empty files
+				return file instanceof File && file.size > 0 && file.name;
+			});
+
+			if (validAttachments.length === 0) {
+				// No valid attachments
+				$tbodyattachmentView.append(`
+					<tr>
+						<td colspan="3" class="text-center text-muted">No valid attachments found</td>
+					</tr>
+				`);
+			} else {
+				// Loop through valid files only
+				validAttachments.forEach(file => {
+					const fileName = file.name;
+					const fileType = file.type || 'Unknown';
+					const fileSize = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+
+					$tbodyattachmentView.append(`
+						<tr>
+							<td>${fileName}</td>
+							<td>${fileType}</td>
+							<td>${fileSize}</td>
+						</tr>
+					`);
+				});
+			}
+
+		}
+
+		function multipleAttach222(formData){
 			// Get attachments from FormData
 			let attachments = formData.getAll('attachments[]'); // Use getAll() to get all File objects
+			// alert(attachments.length);
+
 			const $tbodyattachmentView = $('.attachmentView');
 			$tbodyattachmentView.empty();
 
@@ -1033,9 +1076,6 @@
 				`);
 			});
 			}
-			 
-			// Finally show the modal
-			$('#jobDetailModal').modal('show');
 		}
 
 
@@ -1054,8 +1094,8 @@
 				success: function(response){
 					$('.customer-form-submiter').prop('disabled', false);
 					$('#loader').hide();
-
 					if (response.status === "success") {
+						$('#jobDetailModal').modal('hide');
 						showToast("✅ Thank you! Form submitted successfully.");
 						$("#jobForm")[0].reset();
 					} else {

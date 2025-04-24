@@ -60,7 +60,6 @@
 
 
         public function ClientsAddNewJobs_POST() {
-
             // Get POST data
             $user_id = 1; //$this->input->post('user_id');
             // $jobcode = 2002;//$this->input->post('jobcode');
@@ -72,9 +71,6 @@
             $budgeted_hours = $this->input->post('budgeted_hours');
             $accountancy_fee_net = $this->input->post('accountancy_fee_net');
             $additional_comment = $this->input->post('additional_comment');
-
-         
-
 
             $lastJobId = $this->Client_model->getLastJobId();
             $nextId = $lastJobId + 1;
@@ -94,8 +90,6 @@
                 $year_end = $this->input->post('year_end');
             }
 
-           
-            
             // Prepare the data array to insert into database
             $data = [
                 'user_id' => $user_id,
@@ -108,17 +102,13 @@
                 'budgeted_hours' => $budgeted_hours,
                 'accountancy_fee_net' => $accountancy_fee_net,
                 'additional_comment' => $additional_comment,
+                'status' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ];
     
             // Insert data into the database using the model function
             $inserted = $this->Client_model->insert_job($data);
-
-       
-
-
-
     
             // Prepare the JSON response
             if ($inserted) {
@@ -204,7 +194,7 @@
                     $total_size += $file_size;
 
                     if ($file_size > 2 * 1024 * 1024) {
-                        echo "File " . $files['attachments']['name'][$i] . " exceeds 2MB size limit.";
+                        // echo "File " . $files['attachments']['name'][$i] . " exceeds 2MB size limit.";
                         return;
                     }
 
@@ -221,7 +211,7 @@
                     $_FILES['attachment']['size'] = $files['attachments']['size'][$i];
 
                     if (!$this->upload->do_upload('attachment')) {
-                        echo $this->upload->display_errors();
+                        // echo $this->upload->display_errors();
                         return;
                     } else {
                         $data = $this->upload->data();
@@ -234,7 +224,7 @@
             }
 
             if ($total_size > 50 * 1024 * 1024) {
-                echo "Total upload exceeds 50MB.";
+                // echo "Total upload exceeds 50MB.";
                 return;
             }
 
@@ -242,9 +232,9 @@
             if (!empty($uploaded_files)) {
                 $this->load->model('Client_model');
                 $this->Client_model->insert_job_attachments($uploaded_files);
-                echo "Files uploaded successfully.";
+                // echo "Files uploaded successfully.";
             } else {
-                echo "No files uploaded.";
+                // echo "No files uploaded.";
             }
         }
 

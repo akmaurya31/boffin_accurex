@@ -149,7 +149,6 @@ function loadJobs(page = 1, search = '') {
         data: { page: page, limit: 20, search: search },
         dataType: 'json',
         success: function (res) {
-			console.log(res,"LLL152");
             let html = '';
             res.jobs.forEach(job => {
                 html += `<tr><td>${job.job_code}</td><td>${job.job_name}</td></tr>`;
