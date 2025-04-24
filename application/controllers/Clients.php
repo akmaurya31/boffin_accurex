@@ -102,7 +102,7 @@
                 'budgeted_hours' => $budgeted_hours,
                 'accountancy_fee_net' => $accountancy_fee_net,
                 'additional_comment' => $additional_comment,
-                'status' => 1,
+                'status' => 5,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ];
