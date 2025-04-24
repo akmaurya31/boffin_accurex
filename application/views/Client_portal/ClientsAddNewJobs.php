@@ -624,7 +624,7 @@
 				</div>
 			</div>
 			<div class="col-md-12 text-center mb-3">
-				<button class="btn btn-purple customer-form-submiter">Preview</button>
+				<button type="submit" class="btn btn-purple customer-form-submiter">Preview</button>
 				<button  class="btn btn-purple" data-toggle="modal" data-target="#jobDetailModal">Preview</button>
 				<!-- <div style="display: flex; align-items: center; gap: 10px;">
 					<button class="btn btn-purple customer-form-submiter" type="submit">Preview</button>
@@ -655,41 +655,69 @@
             <table class="table table-bordered">
                 <tr>
                   <th>Type of assignment:</th>
-                  <td>Tax return</td>
+                  <td class="m_assignment">Tax return</td>
                 </tr>
                 <tr>
                   <th>Name of client:</th>
-                  <td>Adam Melling</td>
+                  <td class="m_client"></td>
                 </tr>
                 <tr>
                   <th>Contact person Name:</th>
-                  <td>Sean Paul</td>
+                  <td class="m_person"></td>
                 </tr>
                 <tr>
                   <th>Email:</th>
-                  <td>seanpaul@taxkeeper.co.uk</td>
+                  <td class="m_email"></td>
                 </tr>
                 <tr>
                   <th>Tax Year:</th>
-                  <td>05/04/2020</td>
+                  <td class="m_taxyear"></td>
                 </tr>
                 <tr>
                   <th>Budgeted hours:</th>
-                  <td>5</td>
+                  <td class="m_budget"></td>
                 </tr>
                 <tr>
                   <th>Accountancy Fees (Net):</th>
-                  <td>200</td>
+                  <td class="m_fee"></td>
                 </tr>
                 <tr>
                   <th>Additional Comments:</th>
-                  <td></td>
+                  <td class="m_comments"></td>
                 </tr>
             </table>
+
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+					<th>File Name</th>
+					<th>Type</th>
+					<th>Size</th>
+					</tr>
+				</thead>
+				<tbody class="attachmentView">
+					<tr>
+						<td>My File Name 1</td>
+						<td>PDF</td>
+						<td>1.2 MB</td>
+					</tr>
+					<tr>
+						<td>My File Name 2</td>
+						<td>DOCX</td>
+						<td>900 KB</td>
+					</tr>
+					<tr>
+						<td>My File Name 3</td>
+						<td>PNG</td>
+						<td>2.5 MB</td>
+					</tr>
+				</tbody>
+				</table>
+
           </div>
           <div class="col-md-6">
             <table class="table table-bordered">
-              <tbody>
+              <tbody class="previewEmployement">
 			    <tr>
                     <td width="50">1</td>
                     <td>Employment</td>
@@ -778,6 +806,22 @@
 
 
 <script>
+	const checklistData = <?= json_encode(
+				array_reduce(
+				getAllChecklists(),
+				function($carry, $item) {
+					$carry[$item['assignment_type']][] = [
+					'id'    => $item['id'],
+					'title' => $item['title'],
+					'sn' => $item['sn']
+					];
+					return $carry;
+				},
+				[]
+				)
+			) ?>;
+			console.log(checklistData,"dfff");
+
 	function validateRequiredField(selector, message) {
 		$(selector).on('blur', function () {
 			const $this = $(this);
@@ -807,7 +851,9 @@
     			 let errorMsg = "";	
 				 $('span.error-msg').html('').hide();
 
-				 var formData = new FormData(this);
+				var formData = new FormData(this);
+				// Loop through all fields and files
+				
 
    			    validateRequiredField('[name="client_name"]', "Client name is required");
 				validateRequiredField('[name="assignment_type"]', "Please select assignment type");
@@ -845,11 +891,11 @@
 
 				// Email validation
 				if ($('[name="email_address"]').val().trim() === "") {
-				isValid =false;
-				$('[name="email_address"]').css("border", "1px solid red");
-				$('[name="email_address"]').closest('div').find('.error-msg').html("Email is required").css("color", "red").show();
+					isValid =false;
+					$('[name="email_address"]').css("border", "1px solid red");
+					$('[name="email_address"]').closest('div').find('.error-msg').html("Email is required").css("color", "red").show();
 				} else {
-				$('[name="email_address"]').css("border", "");
+					$('[name="email_address"]').css("border", "");
 				}
 
 				// Accountancy Fee validation
@@ -868,13 +914,13 @@
 				}
 				$("#loader").show();
 				$("#responseMsg").hide();
-				showPreviewAndBind();
+				showPreviewAndBind(formData);
             });
         });
 
-		function showPreviewAndBind() {
+		function showPreviewAndBind(formData) {
 			// Show your preview modal
-			showPreviewModal();
+			showPreviewModal(formData);
 
 			// Unbind any previous handlers, then bind a one-time click
 			$('.con_and_sub').off('click').one('click', function() {
@@ -885,8 +931,111 @@
 			});
 		}
 
-		function showPreviewModal() {
-				$('#jobDetailModal').modal('show');
+		function showPreviewModal(formData) {
+			// Extract just the bits you need
+			for (let [key, value] of formData.entries()) {
+				console.log(key, ":", value);
+			}
+
+			 // Group all checklists by assignment_type
+			
+
+			// console.log(checklistData,"checklistData"); 
+
+			const assignment = formData.get('assignment_type')      || '';
+			const client     = formData.get('client_name')          || '';
+			const person     = formData.get('contact_person')       || '';
+			const email      = formData.get('email_address')        || '';
+			const taxYearEnd = formData.get('tax_year_end')         || '';
+			const yearEnd    = formData.get('year_end')             || '';
+			const m_budget    = formData.get('budgeted_hours')             || '';
+			const m_fee    = formData.get('accountancy_fee_net')             || '';
+			const m_comments    = formData.get('additional_comment')             || '';
+			// …and so on for any other fields you want to preview
+
+			// Inject into your modal
+
+			// Mapping object
+			const assignmentTypeLabels = {
+			'year_end_account':    'Year End Account',
+			'bookkeeping':         'Bookkeeping / VAT',
+			'personal_tax_return': 'Personal Tax Return',
+			'other':               'Other'
+			};
+
+			const assignmentLabel = assignmentTypeLabels[assignment] || assignment;
+			
+			$('.m_assignment').text(assignmentLabel);
+			$('.m_client').text(client);
+			$('.m_person').text(person);
+			$('.m_email').text(email);
+			$('.m_taxyear').text(taxYearEnd);
+			$('.m_budget').text(m_budget);
+			$('.m_fee').text(m_fee);
+			$('.m_comments').text(m_comments);
+
+			const items = checklistData[assignment] || [];
+			const $tbody = $('.previewEmployement');
+			$tbody.empty();
+
+			const assignmentSort = {
+			'year_end_account':    'yea',
+			'bookkeeping':         'book',
+			'personal_tax_return': 'ptr',
+			'other':               'oth'
+			};
+
+			const assignmentLabelShort = assignmentSort[assignment] || assignment;
+
+			items.forEach((item, idx) => {
+				// Assuming your form field names are:
+				const textVal = formData.get(`${assignmentLabelShort}_employment_text_${item.sn}`) || '';
+				const val     = formData.get(`${assignmentLabelShort}_employment_${item.sn}`)      || '';
+				const finalval = val === 'on' ? 'Yes' : 'No';
+
+
+				$tbody.append(`
+				<tr>
+					<td width="50">${idx + 1}</td>
+					<td>${item.title}</td>
+					<td>${finalval}</td>
+					<td width="200">${textVal}</td>
+				</tr>
+				`);
+			});
+
+
+			// Get attachments from FormData
+			let attachments = formData.getAll('attachments[]'); // Use getAll() to get all File objects
+			const $tbodyattachmentView = $('.attachmentView');
+			$tbodyattachmentView.empty();
+
+			if (attachments.length === 0) {
+			// If no files selected
+			$tbodyattachmentView.append(`
+				<tr>
+				<td colspan="3" class="text-center text-muted">No attachments found</td>
+				</tr>
+			`);
+			} else {
+			// Loop through each attachment
+			attachments.forEach(file => {
+				const fileName = file.name;
+				const fileType = file.type || 'Unknown';
+				const fileSize = (file.size / (1024 * 1024)).toFixed(2) + ' MB'; // Convert to MB
+
+				$tbodyattachmentView.append(`
+				<tr>
+					<td>${fileName}</td>
+					<td>${fileType}</td>
+					<td>${fileSize}</td>
+				</tr>
+				`);
+			});
+			}
+			 
+			// Finally show the modal
+			$('#jobDetailModal').modal('show');
 		}
 
 
