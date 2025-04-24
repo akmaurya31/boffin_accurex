@@ -637,7 +637,7 @@
 	<?= form_close(); ?>
 </div>	
 
-<!-- Preview Modal-->
+<!-- Start Preview Modal-->
 <div class="modal fade" id="jobDetailModal" tabindex="-1" role="dialog" aria-labelledby="jobDetailLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
@@ -690,7 +690,7 @@
           <div class="col-md-6">
             <table class="table table-bordered">
               <tbody>
-                <tr>
+			    <tr>
                     <td width="50">1</td>
                     <td>Employment</td>
                     <td>Yes</td>
@@ -702,86 +702,21 @@
                     <td>No</td>
                     <td></td>
                 </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Self employment</td>
-                    <td>No</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td>UK Property</td>
-                    <td>No</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>5</td>
-                    <td>Partnership</td>
-                    <td>No</td>
-                </tr>
-                <tr>
-                    <td>6</td>
-                    <td>Interest Income</td>
-                    <td>No</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>7</td>
-                    <td>Dividend Income</td>
-                    <td>No</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>8</td>
-                    <td>Foreign Income</td>
-                    <td>No</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>9</td>
-                    <td>Capital Gain</td>
-                    <td>No</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>10</td>
-                    <td>Any Other income</td>
-                    <td>No</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>11</td>
-                    <td>Last year tax return</td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>12</td>
-                    <td>Payment on Account</td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>13</td>
-                    <td>Any other info</td>
-                    <td></td>
-                    <td></td>
-                </tr>
-              </tbody>
+			  </tbody>
             </table>
           </div>
         </div>
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-purple">Confirm & Submit</button>
+        <button type="button" class="btn btn-purple con_and_sub">Confirm & Submit</button>
         <button type="button" class="btn dismiss" data-dismiss="modal">Close</button>
       </div>
 
     </div>
   </div>
 </div>
-
+<!--EndPreview Modal-->
 
 
 <footer class="text-center py-3">
@@ -933,30 +868,57 @@
 				}
 				$("#loader").show();
 				$("#responseMsg").hide();
-
-                $.ajax({
-					url: "<?= base_url('Clients/ClientsAddNewJobs_POST') ?>",
-                    type: 'POST',
-                   // data: $("#jobForm").serialize(),
-				    data: formData,
-					processData: false,  // required for FormData
-					contentType: false,  // required for FormData
-					dataType: "json",
-                    success: function(response){
-							$('.customer-form-submiter').prop('disabled', false);
-							$('#loader').hide();
-                        if(response.status == "success"){
-							showToast("✅ Thank you! Form submitted successfully.");
-         					$("#jobForm")[0].reset();
-                        } else {
-							showToast("✅ Faile you! Form submitted successfully.");
-                        }
-                    },
-                    error: function(){
-                        $("#loader").hide();
-						showToast("❌ Something went wrong. Please try again.");
-                    }
-                });
+				showPreviewAndBind();
             });
         });
+
+		function showPreviewAndBind() {
+			// Show your preview modal
+			showPreviewModal();
+
+			// Unbind any previous handlers, then bind a one-time click
+			$('.con_and_sub').off('click').one('click', function() {
+				// Grab the form data fresh (if you need it again)
+				var formData = new FormData($('#jobForm')[0]);
+				// Fire off your AJAX
+				submitNewJob(formData);
+			});
+		}
+
+		function showPreviewModal() {
+				$('#jobDetailModal').modal('show');
+		}
+
+
+		function submitNewJob(formData) {
+			$('.customer-form-submiter').prop('disabled', true);
+			$('#loader').show();
+			$('#responseMsg').hide();
+
+			$.ajax({
+				url: "<?= base_url('Clients/ClientsAddNewJobs_POST') ?>",
+				type: 'POST',
+				data: formData,
+				processData: false,  // required for FormData
+				contentType: false,  // required for FormData
+				dataType: "json",
+				success: function(response){
+					$('.customer-form-submiter').prop('disabled', false);
+					$('#loader').hide();
+
+					if (response.status === "success") {
+						showToast("✅ Thank you! Form submitted successfully.");
+						$("#jobForm")[0].reset();
+					} else {
+						showToast("⚠️ Oops! Submission failed.");
+					}
+				},
+				error: function(){
+					$('#loader').hide();
+					showToast("❌ Something went wrong. Please try again.");
+				}
+			});
+		}
+
+
 </script>

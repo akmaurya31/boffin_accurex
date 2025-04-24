@@ -77,7 +77,7 @@ class Client_model extends CI_Model {
 
 
     public function get_today_completed_jobs($limit, $offset, $jobcode = '', $job_name = '') {
-        $this->db->select('jobcode,assignment_type, client_name,created_at');
+        $this->db->select('jobcode,assignment_type,year_end,client_name,created_at');
         $this->db->from('joblist');
         $this->db->where('DATE(completed_date)', date('Y-m-d'));
         $this->db->where('status', 4);
@@ -149,7 +149,13 @@ class Client_model extends CI_Model {
             $this->db->like('job_name', $filters['search_name']);
         }
         if ($filters['status'] !== '') {
-            $this->db->where('status', $filters['status']);
+            // agar status me 1 hai in case to isme 1,5 dono where condition me chekck honge aur sabhi case me same 2 me 2 3 me 3 4 me 4
+            if ($filters['status'] == 1) {
+                $this->db->where_in('status', [1, 5]);
+            } else {
+                $this->db->where('status', $filters['status']);
+            }
+
         }
     
         $total = $this->db->count_all_results(); // store total here
@@ -165,7 +171,11 @@ class Client_model extends CI_Model {
             $this->db->like('job_name', $filters['search_name']);
         }
         if ($filters['status'] !== '') {
-            $this->db->where('status', $filters['status']);
+            if ($filters['status'] == 1) {
+                $this->db->where_in('status', [1, 5]);
+            } else {
+                $this->db->where('status', $filters['status']);
+            }
         }
     
         

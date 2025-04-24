@@ -295,6 +295,7 @@
                 $job->job_name = $this->generate_job_title(
                     $job->client_name,
                     $job->assignment_type,
+                    $job->year_end,
                     $job->created_at
                 );
 
@@ -358,6 +359,7 @@
                 $job['job_name'] = $this->generate_job_title(
                     $job['client_name'],
                     $job['assignment_type'],
+                    $job['year_end'],
                     $job['created_at']
                 );
                 $status_details = get_job_status_details($job['status']);
@@ -374,20 +376,26 @@
             ]);
         }
 
-        private function generate_job_title($client_name, $assignment_type, $created_date) {
+        private function generate_job_title($client_name, $assignment_type,$year_end,$created_date) {
             $short_type = strtoupper(substr($assignment_type, 0, 3));
             if ($short_type === 'BOO') {
-                $final_type = 'VAT';
+                $final_type     = 'VAT';
+                // 31-07-<year_end>
+                $formatted_date = '31-07-' . $year_end;
             } elseif ($short_type === 'PER') {
-                $final_type = 'PTR';
+                $final_type     = 'PTR';
+                // 05-04-<year_end>
+                $formatted_date = '05-04-' . $year_end;
             } elseif ($short_type === 'YEA') {
-                $final_type = 'YEA';
+                $final_type     = 'YE';
+                // just the year (or you could build a full date if you prefer)
+                $formatted_date = $year_end;
             } else {
-                $final_type = 'OTH'; // Or you can set a default value
+                $final_type     = 'OTH';
+                $formatted_date = date('d-m-Y', strtotime($created_date));
             }
-
-            $formatted_date = date('d-m-Y', strtotime($created_date));
-            return "{$client_name}-{$final_type}-{$formatted_date}";
+            $FirstNameLastName="RS";
+            return "{$client_name}-{$final_type}-{$formatted_date}($FirstNameLastName)";
         }
 
 
