@@ -101,13 +101,13 @@ class Client_model extends CI_Model {
         $this->db->where('DATE(completed_date)', date('Y-m-d'));
         $this->db->where('status', 4);
     
-        if ($jobcode) {
-            $this->db->like('jobcode', $jobcode);
-        }
+        // if ($jobcode) {
+        //     $this->db->like('jobcode', $jobcode);
+        // }
     
-        if ($job_name) {
-            $this->db->like('client_name', $job_name);
-        }
+        // if ($job_name) {
+        //     $this->db->like('client_name', $job_name);
+        // }
     
         return $this->db->count_all_results();
     }
