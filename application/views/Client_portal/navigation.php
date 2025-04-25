@@ -173,11 +173,13 @@
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle position-relative" href="#" id="notifDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="fa fa-bell-o fa-lg"></i> Notifications
-                <span class="badge badge-danger badge-pill" style="position: absolute; top: 0px; font-size: 12px; left: 15px;">5</span>
+                <span id="notif-count" class="badge badge-danger badge-pill" style="position: absolute; top: 0px; font-size: 12px; left: 15px;">
+                  5
+                </span>
               </a>
               <div class="dropdown-menu dropdown-menu-right p-0 shadow-lg border-0 rounded-lg" aria-labelledby="notifDropdown" style="width: 350px;left: 0px;">
                 
-                <div class="list-group list-group-flush">
+                <div id="notif-list" class="list-group list-group-flush">
                   <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start hover-highlight">
                     <div>
                        Meena Kumari-PTR-05-04-2020(RS) <br>
@@ -250,3 +252,46 @@
 	  </div>
 	</div>
 </nav>
+
+
+
+<script>
+  $(document).ready(function () {
+    $.ajax({
+      url: "<?php echo base_url('Notifications/load_notifications'); ?>",
+      method: "GET",
+      dataType: "json",
+      success: function (data) {
+        $('#notif-count').text(data.notifications.total_unread);
+        var listHtml = '';
+        if (data.jobs.length === 0) {
+          listHtml = '<span class="list-group-item text-muted">No notifications</span>';
+        } else {
+          data.jobs.slice(0, 6).forEach(function (notif) {
+            listHtml += `
+              <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start hover-highlight">
+                <div>
+                  ${notif.job_name} <br>
+                  <span class="text- badge ${notif.badge_color}">Job ${notif.status_name} >> ${notif.sub_status}</span>
+                </div>
+                <small class="text-muted">${timeAgo(notif.created_at)}</small>
+              </a>
+            `;
+          });
+        }
+        $('#notif-list').html(listHtml);
+      }
+    });
+
+    function timeAgo(dateStr) {
+      const now = new Date();
+      const date = new Date(dateStr);
+      const diff = Math.floor((now - date) / 60000); // in minutes
+      if (diff < 60) return `${diff}m ago`;
+      const hr = Math.floor(diff / 60);
+      if (hr < 24) return `${hr}h ago`;
+      // console.log(date.toLocaleDateString());
+      return date.toLocaleDateString();
+    }
+  });
+</script>

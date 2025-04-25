@@ -77,7 +77,7 @@ $route['ClientsAddNewJobs']				= 'Clients/ClientsAddNewJobs';
 $route['ClientsAddNewJobs_POST']		= 'Clients/ClientsAddNewJobs_POST';
 
 $route['ClientsJobsList']				= 'Clients/ClientsJobsList';
-$route['ClientsNotification']			= 'Clients/ClientsNotification';
+$route['ClientsNotification']			= 'Notifications/ClientsNotification';
 $route['clientProfileInformation']		= 'Clients/clientProfileInformation';
 
 

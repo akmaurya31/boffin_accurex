@@ -99,14 +99,14 @@
 		  <div class="dashboard-line"></div>
 	    </div>
         <div class="table-responsive">
-            <table class="table table-bordered table-hover ">
+            <table  id="notifications-table"  class="table table-bordered table-hover ">
                 <thead>
                     <tr>
                         <th width="80">Sr. No.</th>
                         <th>Job Heading</th>
                         <th width="180">Status</th>
                         <th width="200">Date</th>
-                        <th width="80">Read</th>
+                        <!-- <th width="80">Read</th> -->
                     </tr>
                 </thead>
                 <tbody>
@@ -115,84 +115,15 @@
                         <td> Meena Kumari-PTR-05-04-2020(RS) </td>
                         <td><span class="success-badge">Job Completed</span></td>
                         <td>12 April 2025, 10:30PM</td>
-                        <td>
+                        <!-- <td>
                             <a href="#" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#viewNotification"><i class="fa fa-eye"></i></a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>02.</td>
-                        <td> Meena Kumari-PTR-05-04-2020(RS) </td>
-                        <td><span class="success-badge">Job Completed</span></td>
-                        <td>12 April 2025, 10:30PM</td>
-                        <td>
-                            <a href="#" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#viewNotification"><i class="fa fa-eye"></i></a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>03.</td>
-                        <td> Meena Kumari-PTR-05-04-2020(RS) </td>
-                        <td><span class="success-badge">Job Completed</span></td>
-                        <td>12 April 2025, 10:30PM</td>
-                        <td>
-                            <a href="#" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#viewNotification"><i class="fa fa-eye"></i></a>
-                        </td>
-                    </tr>
-                     <tr>
-                        <td>04.</td>
-                        <td> Meena Kumari-PTR-05-04-2020(RS) </td>
-                        <td><span class="success-badge">Job Completed</span></td>
-                        <td>12 April 2025, 10:30PM</td>
-                        <td>
-                            <a href="#" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#viewNotification"><i class="fa fa-eye"></i></a>
-                        </td>
-                    </tr>
-                     <tr>
-                        <td>05.</td>
-                        <td> Meena Kumari-PTR-05-04-2020(RS) </td>
-                        <td><span class="danger-badge">Job On Hold</span></td>
-                        <td>12 April 2025, 10:30PM</td>
-                        <td>
-                            <a href="#" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#viewNotification"><i class="fa fa-eye"></i></a>
-                        </td>
-                    </tr>
-                     <tr>
-                        <td>06.</td>
-                        <td> Meena Kumari-PTR-05-04-2020(RS) </td>
-                        <td><span class="success-badge">Job Completed</span></td>
-                        <td>12 April 2025, 10:30PM</td>
-                        <td>
-                            <a href="#" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#viewNotification"><i class="fa fa-eye"></i></a>
-                        </td>
-                    </tr>
-                     <tr>
-                        <td>07.</td>
-                        <td> Meena Kumari-PTR-05-04-2020(RS) </td>
-                        <td><span class="warning-badge">Job Under Review</span></td>
-                        <td>12 April 2025, 10:30PM</td>
-                        <td>
-                            <a href="#" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#viewNotification"><i class="fa fa-eye"></i></a>
-                        </td>
-                    </tr>
-                     <tr>
-                        <td>08.</td>
-                        <td> Meena Kumari-PTR-05-04-2020(RS) </td>
-                        <td><span class="success-badge">Job Completed</span></td>
-                        <td>12 April 2025, 10:30PM</td>
-                        <td>
-                            <a href="#" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#viewNotification"><i class="fa fa-eye"></i></a>
-                        </td>
-                    </tr> 
-                    <tr>
-                        <td>09.</td>
-                        <td> Meena Kumari-PTR-05-04-2020(RS) </td>
-                        <td><span class="success-badge">Job Completed</span></td>
-                        <td>12 April 2025, 10:30PM</td>
-                        <td>
-                            <a href="#" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#viewNotification"><i class="fa fa-eye"></i></a>
-                        </td>
+                        </td> -->
                     </tr>
                 </tbody>
             </table>
+            <div id="pagination">
+                <!-- Pagination links will be dynamically added here -->
+            </div>
 	    </div>
 	</div>
 </div>
@@ -217,4 +148,72 @@
          &copy; 2025 Accurex Accounting | Powered by <a href="https://boffinweb.com" target="_blank">Boffin Web Technology</a>
     </div>
 </footer>
+
+<script>
+let statusMap = {}; // Will hold { id: { name, class }, ... }
+
+// Function to render the status cell, now uses the statusMap
+function renderStatusCell(statusId) {
+  return `<span class="${statusMap[statusId]?.class || 'badge badge-secondary'}">${statusMap[statusId]?.name || 'Unknown'}</span>`;
+}
+
+// Function to load notifications for a given page
+function loadNotifications(page) {
+  $.ajax({
+    url: '<?= base_url("Notifications/load_notifications") ?>', // PHP endpoint
+    method: 'GET',
+    data: { page: page }, // Send the current page number
+    dataType: 'json', // Expect JSON response
+    success: function (response) {
+      var notifications = response.jobs;
+      console.log(typeof notifications); 
+      var pagination = response.pagination;
+
+      // Empty table before adding new rows
+      $('#notifications-table tbody').empty();
+
+      // Append new notifications to the table
+      notifications.forEach(function (notification, index) {
+        // Use the status from the notification object.
+        const statusHTML = renderStatusCell(notification.status);
+
+        $('#notifications-table tbody').append(`
+          <tr class="ss">
+            <td>${(page - 1) * 20 + (index + 1)}</td>
+            <td>${notification.job_name}</td>
+            <td><span class="badge ${notification.badge_color}">${notification.status_name}</span></td>
+            <td>${notification.created_at}</td>
+          </tr>
+        `);
+      });
+
+      // Update pagination links
+      $('#pagination').html(pagination);
+    },
+    error: function () {
+      alert('Failed to load notifications.');
+    }
+  });
+}
+
+$(document).ready(function () {
+  // Fetch all statuses on page load
+  $.getJSON('<?= base_url('Notifications/status_lookupall') ?>')
+    .done(function (data) {
+      statusMap = data; // Store the status map
+      // Now that we have the map, load page 1 of notifications
+      loadNotifications(1);
+    })
+    .fail(function () {
+      alert('Could not load status mappings.');
+    });
+
+  // On page click (event delegation)
+  $(document).on('click', '.pagination-link', function (e) {
+    e.preventDefault();
+    var page = $(this).data('page');
+    loadNotifications(page);
+  });
+});
+</script>
 <?php include('footer.php');?>

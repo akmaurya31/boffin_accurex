@@ -48,10 +48,10 @@
 
 
        
-        public function ClientsNotification()
-        {
-            $this->load->view('Client_portal/ClientsNotification',$data);
-        }
+        // public function ClientsNotification()
+        // {
+        //     $this->load->view('Client_portal/ClientsNotification',$data);
+        // }
         
         public function clientProfileInformation()
         {
@@ -279,25 +279,14 @@
             $jobs = $this->Client_model->get_today_completed_jobs($limit, $offset, $job_code, $job_name);
             $total = $this->Client_model->count_today_completed_jobs($job_code, $job_name);
 
-
             foreach ($jobs as &$job) {
-                // print_r($job); die("ASdfas");
-                $job->job_name = $this->generate_job_title(
+                $job->job_name = generate_job_title(
                     $job->client_name,
                     $job->assignment_type,
                     $job->year_end,
                     $job->created_at
                 );
-
-                // $job['job_name'] = $this->generate_job_title(
-                //     $job['client_name'],
-                //     $job['assignment_type'],
-                //     $job['created_at']
-                // );
-
-                
             }
-
         
             echo json_encode([
                 'jobs' => $jobs,
@@ -331,22 +320,9 @@
 
             $total = 0;
             $jobs = $this->Client_model->extra_get_filtered_jobs($limit, $offset, $filters, $total);
-
-            // print_r($jobs);
-            // die("ASdfa");
-        
-
-            // foreach ($jobs as &$job) {
-            //     // print_r($job); die("ASdfas");
-            //     $job->job_name = $this->generate_job_title(
-            //         $job->client_name,
-            //         $job->assignment_type,
-            //         $job->created_at
-            //     );
-            // }
-
+            
             foreach ($jobs as &$job) {
-                $job['job_name'] = $this->generate_job_title(
+                $job['job_name'] = generate_job_title(
                     $job['client_name'],
                     $job['assignment_type'],
                     $job['year_end'],
@@ -366,28 +342,7 @@
             ]);
         }
 
-        private function generate_job_title($client_name, $assignment_type,$year_end,$created_date) {
-            $short_type = strtoupper(substr($assignment_type, 0, 3));
-            if ($short_type === 'BOO') {
-                $final_type     = 'VAT';
-                // 31-07-<year_end>
-                $formatted_date = '31-07-' . $year_end;
-            } elseif ($short_type === 'PER') {
-                $final_type     = 'PTR';
-                // 05-04-<year_end>
-                $formatted_date = '05-04-' . $year_end;
-            } elseif ($short_type === 'YEA') {
-                $final_type     = 'YE';
-                // just the year (or you could build a full date if you prefer)
-                $formatted_date = $year_end;
-            } else {
-                $final_type     = 'OTH';
-                $formatted_date = date('d-m-Y', strtotime($created_date));
-            }
-            $FirstNameLastName="RS";
-            return "{$client_name}-{$final_type}-{$formatted_date}($FirstNameLastName)";
-        }
-
+       
 
         public function ClientsJobsList()
         {

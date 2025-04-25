@@ -132,4 +132,28 @@ if (! function_exists('getAssignmentTypeOptions')) {
 }
 
 
+function generate_job_title($client_name, $assignment_type,$year_end,$created_date) {
+    $short_type = strtoupper(substr($assignment_type, 0, 3));
+    if ($short_type === 'BOO') {
+        $final_type     = 'VAT';
+        // 31-07-<year_end>
+        $formatted_date = '31-07-' . $year_end;
+    } elseif ($short_type === 'PER') {
+        $final_type     = 'PTR';
+        // 05-04-<year_end>
+        $formatted_date = '05-04-' . $year_end;
+    } elseif ($short_type === 'YEA') {
+        $final_type     = 'YE';
+        // just the year (or you could build a full date if you prefer)
+        $formatted_date = $year_end;
+    } else {
+        $final_type     = 'OTH';
+        $formatted_date = date('d-m-Y', strtotime($created_date));
+    }
+    $FirstNameLastName="RS";
+    return "{$client_name}-{$final_type}-{$formatted_date}($FirstNameLastName)";
+}
+
+
+
 
