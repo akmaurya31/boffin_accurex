@@ -12,12 +12,12 @@
 		display: block;
 	}
 
-	.nav-link{
-		font-weight: 500;
-	    color: #14264d;
-	    font-family: system-ui;
-	    font-size: 16px;
-	}
+	/*.nav-link{*/
+	/*	font-weight: 500;*/
+	/*    color: #14264d;*/
+	/*    font-family: system-ui;*/
+	/*    font-size: 16px;*/
+	/*}*/
 	li.nav-item {
 	    padding: 0px 15px;
 	}
@@ -79,6 +79,33 @@
 	.navbar{
 		padding: 1rem 1rem;
 	}
+    .nav-link {
+        cursor: pointer;
+    }
+    .card {
+        border-radius: 12px;
+    }
+    .card-header {
+        border-bottom: none;
+    }
+    .list-group-item {
+        border: none;
+        padding-left: 0;
+    }
+    .bg-purple{
+        background-color: #14264d;
+    }
+    .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+        background-color: #fff!important;
+        color: #14264d!important;
+    }
+    .nav-pills .nav-link{
+        color: #fff!important;
+    }
+    .card h5 {
+        text-transform: uppercase;
+        font-weight: 600;
+    }
 </style>
 <?php include('navigation.php');?>
 <div class="page-content">
@@ -95,8 +122,57 @@
 		  <div class="dashboard-tab">PROFILE INFORMATION</div>
 		  <div class="dashboard-line"></div>
 	    </div>
-	    <div class="row mt-3">
-	  </div>
+        <div class="row justify-content-center">
+            <!-- Left Sidebar -->
+            <div class="col-md-4">
+              <div class="card shadow-sm p-4 text-center">
+                <img src="https://aa.boffinweb.com/assets/img/user.jpg" class="rounded-circle mx-auto mb-3" width="100" height="100" alt="Profile">
+                <h5 class="mb-0">Uttam Patel</h5>
+                <small class="text-muted">uttam@boffinweb.com</small>
+                <hr>
+                <p class="text-muted mb-1"><i class="fa fa-phone"></i> +91 8423533858</p>
+                <p class="text-muted"><i class="fa fa-map-marker"></i> Lucknow, India</p>
+                <a href="<?php echo base_url('clientProfileEdit'); ?>" class="btn btn-purple btn-sm mt-2">Edit Profile</a>
+                <a href="<?php echo base_url('logout'); ?>" class="btn btn-outline-danger btn-sm mt-2 dismiss">Logout</a>
+              </div>
+            </div>
+
+            <!-- Right Content Area -->
+            <div class="col-md-8">
+              <div class="card shadow-sm border-0 rounded-lg">
+                <div class="card-header bg-purple text-white d-flex justify-content-between align-items-center">
+                  <span><i class="fa fa-user mr-2"></i>Profile Details</span>
+                  <ul class="nav nav-pills card-header-pills">
+                    <li class="nav-item">
+                      <a class="nav-link active" data-toggle="tab" href="#info">General Information</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" data-toggle="tab" href="#security">Security</a>
+                    </li>
+                  </ul>
+                </div>
+                <div class="card-body tab-content">
+                  <!-- Info Tab -->
+                  <div class="tab-pane fade show active" id="info">
+                    <p><strong>Name:</strong> Boffin Web Technology</p>
+                    <p><strong>Email:</strong> boffinwebs@gmail.com</p>
+                    <p><strong>Phone:</strong> +91 8423533858</p>
+                    <p><strong>Joined:</strong> April 2023</p>
+                  </div>    
+        
+                  <!-- Security Tab -->
+                  <div class="tab-pane fade" id="security">
+                    <p><strong>Password:</strong> ********</p>
+                    <a href="#" class="btn btn-sm btn-outline-warning">Change Password</a>
+                    <hr>
+                    <p><strong>2FA:</strong> Not Enabled</p>
+                    <a href="#" class="btn btn-sm btn-outline-secondary">Enable 2FA</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+  </div>
+
 	</div>
 
 

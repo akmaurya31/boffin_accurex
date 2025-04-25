@@ -97,12 +97,39 @@
     }
     td, th {
         border: 1px solid #dee2e6;
-        font-family: "Inter", sans-serif;
+        font-family: 'Roboto';
         font-size: 14px;
     }
-    .jobTabs ul li a{
-        font-family: "Inter", sans-serif;
-        font-size: 14px;
+    
+    .form-control{
+        font-size:14px;
+    }
+    
+    .modal-header{
+        border-bottom: 0px;
+    }
+    .modal-footer{
+        border-top: 0px;
+    }
+    .dismiss {
+        border: 1px solid #ccc;
+        padding: 5px 30px;
+        line-height: 35px;
+        font-weight: 600;
+    }
+    textarea{
+            background-color: #f1f5fa!important;
+    }
+    textarea:focus{
+            background-color: #f1f5fa!important;
+            border: 1px solid #f1f5fa;
+            box-shadow: none!important;
+    }
+    .modal-title {
+        margin-bottom: 0;
+        line-height: 1.5;
+        font-size: 20px;
+        color: #14264e;
     }
 </style>
 <?php include('navigation.php');?>
@@ -143,14 +170,8 @@
 <div class="table-responsive">
     <table class="table table-bordered">
         <thead>
-            <tr>
-                <th style="width: 140px;"><input type="text" class="form-control" placeholder="Search Job Code"></th>
-                <th><input type="text" class="form-control" placeholder="Search Job Name"></th>
-                <th style="width: 120px;"><input type="text" class="form-control" placeholder="Search Status"></th>
-                <th style="width: 120px;"><input type="text" class="form-control" placeholder="Search Sub Status"></th>
-                <th style="width: 120px;"><input type="text" class="form-control" placeholder="Search Recieved On"></th>
-                <th><input type="text" class="form-control" placeholder="Search Comments"></th>
-                <th style="width: 150px;"></th>
+            <tr colspan="7">
+                <th style="width: 140px;"><input type="text" class="form-control" placeholder="Please Enter Searching Keywords"></th>
             </tr>
         </thead>
     </table>
@@ -171,7 +192,7 @@
                         <th>Sub Status</th>
                         <th>Recieved On</th>
                         <th>Job Comments</th>
-                        <th>Action</th>
+                        <th width="150px">Action</th>
                     </tr>
                 </thead>
                 <tbody id="tabContent-live"></tbody>
@@ -192,7 +213,7 @@
                         <th>Sub Status</th>
                         <th>Recieved On</th>
                         <th>Job Comments</th>
-                        <th>Action</th>
+                        <th width="150px">Action</th>
                     </tr>
                 </thead>
                 <tbody id="tabContent-hold"></tbody>
@@ -213,7 +234,7 @@
                         <th>Sub Status</th>
                         <th>Recieved On</th>
                         <th>Job Comments</th>
-                        <th>Action</th>
+                        <th width="150px">Action</th>
                     </tr>
                 </thead>
                 <tbody id="tabContent-completed"></tbody>
@@ -234,13 +255,15 @@
                         <th>Sub Status</th>
                         <th>Recieved On</th>
                         <th>Job Comments</th>
-                        <th>Action</th>
+                        <th width="150px">Action</th>
                     </tr>
                 </thead>
                 <tbody id="tabContent-draft"></tbody>
             </table>
         </div>
-        <nav><ul id="pagination-draft" class="pagination"></ul></nav>
+        <nav>
+            <ul id="pagination-draft" class="pagination"></ul>
+        </nav>
     </div>
 
 </div>
@@ -250,7 +273,136 @@
         </div>
 	</div>
 	  
+<!-- modal for send email-->
+<div class="modal fade" id="sendEmail" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Meena Kumari-PTR-05-04-2020(RS)</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Comments:</label>
+                <textarea class="form-control" name="sendEmail" rows="8"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" name="" class="btn btn-purple">Send Mail</button>
+          <button type="button" class="btn btn-secondary dismiss" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+</div>
 
+<!--- End Send Email Box ----->
+<!-- start view job modfal -->
+<!-- Start Preview Modal-->
+<div class="modal fade" id="jobDetailModal" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title" id="jobDetailLabel">Preview Job Detail</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-6">
+            <table class="table table-bordered">
+                <tr>
+                  <th>Type of assignment:</th>
+                  <td class="m_assignment">Tax return</td>
+                </tr>
+                <tr>
+                  <th>Name of client:</th>
+                  <td class="m_client"></td>
+                </tr>
+                <tr>
+                  <th>Contact person Name:</th>
+                  <td class="m_person"></td>
+                </tr>
+                <tr>
+                  <th>Email:</th>
+                  <td class="m_email"></td>
+                </tr>
+                <tr>
+                  <th>Tax Year:</th>
+                  <td class="m_taxyear"></td>
+                </tr>
+                <tr>
+                  <th>Budgeted hours:</th>
+                  <td class="m_budget"></td>
+                </tr>
+                <tr>
+                  <th>Accountancy Fees (Net):</th>
+                  <td class="m_fee"></td>
+                </tr>
+                <tr>
+                  <th>Additional Comments:</th>
+                  <td class="m_comments"></td>
+                </tr>
+            </table>
+
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+					<th>File Name</th>
+					<th>Type</th>
+					<th>Size</th>
+					</tr>
+				</thead>
+				<tbody class="attachmentView">
+					<tr>
+						<td>My File Name 1</td>
+						<td>PDF</td>
+						<td>1.2 MB</td>
+					</tr>
+					<tr>
+						<td>My File Name 2</td>
+						<td>DOCX</td>
+						<td>900 KB</td>
+					</tr>
+					<tr>
+						<td>My File Name 3</td>
+						<td>PNG</td>
+						<td>2.5 MB</td>
+					</tr>
+				</tbody>
+				</table>
+
+          </div>
+          <div class="col-md-6">
+            <table class="table table-bordered">
+              <tbody class="previewEmployement">
+			    <tr>
+                    <td width="50">1</td>
+                    <td>Employment</td>
+                    <td>Yes</td>
+                    <td width="200"></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Pension Income</td>
+                    <td>No</td>
+                    <td></td>
+                </tr>
+			  </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn dismiss" data-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+<!--EndPreview Modal-->
 
 	<script>
 
@@ -302,9 +454,9 @@ $(document).ready(function () {
                                 <td>${jobDate}</td>
                                 <td>${job.additional_comment}</td>
                                 <td class="actions">
-                                    <a href=""><i class="fa fa-search"></i></a>
-                                    <a href=""><i class="fa fa-send"></i></a>
-                                    <a href=""><i class="fa fa-folder-open"></i></a>
+                                    <a href="" class="btn btn-sm btn-search"><i class="fa fa-search"></i></a>
+                                    <a href="" class="btn btn-sm btn-send" data-toggle="modal" data-target="#sendEmail"><i class="fa fa-send"></i></a>
+                                    <a href="" class="btn btn-sm btn-folder" data-toggle="modal" data-target="#jobDetailModal"><i class="fa fa-eye"></i></a>
                                 </td>
                             </tr>`;
                     });

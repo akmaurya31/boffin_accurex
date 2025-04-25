@@ -12,12 +12,7 @@
 		display: block;
 	}
 
-	.nav-link{
-		font-weight: 500;
-	    color: #14264d;
-	    font-family: system-ui;
-	    font-size: 16px;
-	}
+	
 	li.nav-item {
 	    padding: 0px 15px;
 	}
@@ -64,6 +59,7 @@
 	  border-top-right-radius: 10px;
 	  border-bottom-right-radius: 0;
 	  border-bottom-left-radius: 0;
+	  width: 100%;
 	}
 
 	.dashboard-line {
@@ -79,6 +75,13 @@
 	.navbar{
 		padding: 1rem 1rem;
 	}
+	.modal-title {
+        margin-bottom: 0;
+        line-height: 1.5;
+        font-size: 20px;
+        color: #14264e;
+    }
+    
 </style>
 <?php include('navigation.php');?>
 <div class="page-content">
@@ -90,16 +93,125 @@
     </ol>
   </div>
    <!-- Dashboard Header -->
-    <div class="container">
+    <div class="container bg-white pt-3">
 	    <div class="dashboard-tab-wrapper mb-3">
 		  <div class="dashboard-tab">NOTIFICATION</div>
 		  <div class="dashboard-line"></div>
 	    </div>
-	    <div class="row mt-3">
-	  </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover ">
+                <thead>
+                    <tr>
+                        <th width="80">Sr. No.</th>
+                        <th>Job Heading</th>
+                        <th width="180">Status</th>
+                        <th width="200">Date</th>
+                        <th width="80">Read</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>01.</td>
+                        <td> Meena Kumari-PTR-05-04-2020(RS) </td>
+                        <td><span class="success-badge">Job Completed</span></td>
+                        <td>12 April 2025, 10:30PM</td>
+                        <td>
+                            <a href="#" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#viewNotification"><i class="fa fa-eye"></i></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>02.</td>
+                        <td> Meena Kumari-PTR-05-04-2020(RS) </td>
+                        <td><span class="success-badge">Job Completed</span></td>
+                        <td>12 April 2025, 10:30PM</td>
+                        <td>
+                            <a href="#" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#viewNotification"><i class="fa fa-eye"></i></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>03.</td>
+                        <td> Meena Kumari-PTR-05-04-2020(RS) </td>
+                        <td><span class="success-badge">Job Completed</span></td>
+                        <td>12 April 2025, 10:30PM</td>
+                        <td>
+                            <a href="#" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#viewNotification"><i class="fa fa-eye"></i></a>
+                        </td>
+                    </tr>
+                     <tr>
+                        <td>04.</td>
+                        <td> Meena Kumari-PTR-05-04-2020(RS) </td>
+                        <td><span class="success-badge">Job Completed</span></td>
+                        <td>12 April 2025, 10:30PM</td>
+                        <td>
+                            <a href="#" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#viewNotification"><i class="fa fa-eye"></i></a>
+                        </td>
+                    </tr>
+                     <tr>
+                        <td>05.</td>
+                        <td> Meena Kumari-PTR-05-04-2020(RS) </td>
+                        <td><span class="danger-badge">Job On Hold</span></td>
+                        <td>12 April 2025, 10:30PM</td>
+                        <td>
+                            <a href="#" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#viewNotification"><i class="fa fa-eye"></i></a>
+                        </td>
+                    </tr>
+                     <tr>
+                        <td>06.</td>
+                        <td> Meena Kumari-PTR-05-04-2020(RS) </td>
+                        <td><span class="success-badge">Job Completed</span></td>
+                        <td>12 April 2025, 10:30PM</td>
+                        <td>
+                            <a href="#" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#viewNotification"><i class="fa fa-eye"></i></a>
+                        </td>
+                    </tr>
+                     <tr>
+                        <td>07.</td>
+                        <td> Meena Kumari-PTR-05-04-2020(RS) </td>
+                        <td><span class="warning-badge">Job Under Review</span></td>
+                        <td>12 April 2025, 10:30PM</td>
+                        <td>
+                            <a href="#" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#viewNotification"><i class="fa fa-eye"></i></a>
+                        </td>
+                    </tr>
+                     <tr>
+                        <td>08.</td>
+                        <td> Meena Kumari-PTR-05-04-2020(RS) </td>
+                        <td><span class="success-badge">Job Completed</span></td>
+                        <td>12 April 2025, 10:30PM</td>
+                        <td>
+                            <a href="#" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#viewNotification"><i class="fa fa-eye"></i></a>
+                        </td>
+                    </tr> 
+                    <tr>
+                        <td>09.</td>
+                        <td> Meena Kumari-PTR-05-04-2020(RS) </td>
+                        <td><span class="success-badge">Job Completed</span></td>
+                        <td>12 April 2025, 10:30PM</td>
+                        <td>
+                            <a href="#" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#viewNotification"><i class="fa fa-eye"></i></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+	    </div>
 	</div>
+</div>
 
-
+<!-- modal for Read Notification -->
+<div class="modal fade" id="viewNotification" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Meena Kumari-PTR-05-04-2020(RS)</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+        <div class="modal-body">
+            <p class="paragraph">Explore the powerful features of the client portal for greater clarity, focus and vision for your business. Let’s navigate through them to help you monitor your progress, track jobs and forecast profits for your business.</p>
+            <p class="paragraph">Explore the powerful features of the client portal for greater clarity, focus and vision for your business. Let’s navigate through them to help you monitor your progress, track jobs and forecast profits for your business.</p>
+        </div>
+      </div>
+    </div>
+</div>
 <footer class="text-center py-3">
     <div class="container">
          &copy; 2025 Accurex Accounting | Powered by <a href="https://boffinweb.com" target="_blank">Boffin Web Technology</a>

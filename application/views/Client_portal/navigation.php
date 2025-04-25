@@ -11,21 +11,24 @@
 		display: block;
 	}
 
-	.nav-link{
-		font-weight: 500;
-	    color: #14264d;
-	    font-family: system-ui;
-	    font-size: 16px;
-	}
+	.nav-link {
+        font-weight: 600;
+        color: #14264d !important;
+        font-family: 'Roboto';
+        font-size: 15px;
+    }
 	li.nav-item {
 	    padding: 0px 15px;
 	}
 	.user {
-	    border-left: 2px solid #182a50;
-	    padding-left: 15px;
-	    color: #14264d;
-	    font-weight: 500;
-	}
+        border: 2px solid #182a50;
+        font-weight: 500;
+        padding: 5px 10px;
+    }
+    .user a {
+        color: rgb(20 38 77);
+        text-decoration: none;
+    }
 	.page-content{
 		margin-top: 100px;
 	}
@@ -109,12 +112,38 @@
         background-color: #14264d;
         color: #fff;
     }
-    .user a {
-        color: rgba(0,0,0,.5);
-        text-decoration: none;
-    }
     .user.active a {
         color: #14264d;
+    }
+    .hover-highlight:hover {
+        background: linear-gradient(to right, #f0f9ff, #e0f7fa);
+        color: #000;
+    }
+    .dropdown-menu {
+        animation: fadeInDown 0.3s ease-in-out;
+    }
+    @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          trans form: translateY(0);
+        }
+    }
+    .btn-outline-primary {
+        color: #14264e;
+        border-color: #14264e;
+    }
+    .btn-outline-primary:hover {
+        color: #fff;
+        background-color: #f65d1f;
+        border-color: #f65d1f;
+    }
+    .list-group a span {
+        font-size: 14px;
+        font-weight: 500;
     }
 </style>
 <?php 
@@ -140,11 +169,66 @@
 		        <i class="fa fa-dashboard"></i> Dashboard
 		    </a>
 	      </li>
-	      <li class="nav-item <?php if($uri=='ClientsNotification'){ echo "active";}?>">
-	        <a class="nav-link" href="<?php echo base_url('ClientsNotification');?>">
-	        	<i class="fa fa-bell-o"></i> Notifications
-	        </a>
-	      </li>
+	      <!-- Notification Dropdown Start -->
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle position-relative" href="#" id="notifDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fa fa-bell-o fa-lg"></i> Notifications
+                <span class="badge badge-danger badge-pill" style="position: absolute; top: 0px; font-size: 12px; left: 15px;">5</span>
+              </a>
+              <div class="dropdown-menu dropdown-menu-right p-0 shadow-lg border-0 rounded-lg" aria-labelledby="notifDropdown" style="width: 350px;left: 0px;">
+                
+                <div class="list-group list-group-flush">
+                  <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start hover-highlight">
+                    <div>
+                       Meena Kumari-PTR-05-04-2020(RS) <br>
+                       <span class="text-success">Job Completed</span>
+                    </div>
+                    <small class="text-muted">2m ago</small>
+                  </a>
+                  <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start hover-highlight">
+                    <div>
+                      Ravi Sharma-VAT-31-07-2020(RS)<br>
+                       <span class="text-danger">Job On Hold</span>
+                    </div>
+                    <small class="text-muted">15m ago</small>
+                  </a>
+                  <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start hover-highlight">
+                    <div>
+                      Anita Desai-OTH-20-04-2025(RS)<br>
+                       <span class="text-warning">Job In Progress</span>
+                    </div>
+                    <small class="text-muted">1h ago</small>
+                  </a>
+                  <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start hover-highlight">
+                    <div>
+                       Meena Kumari-PTR-05-04-2020(RS) <br>
+                       <span class="text-success">Job Completed</span>
+                    </div>
+                    <small class="text-muted">2m ago</small>
+                  </a>
+                  <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start hover-highlight">
+                    <div>
+                      Ravi Sharma-VAT-31-07-2020(RS)<br>
+                       <span class="text-danger">Job On Hold</span>
+                    </div>
+                    <small class="text-muted">15m ago</small>
+                  </a>
+                  <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start hover-highlight">
+                    <div>
+                      Anita Desai-OTH-20-04-2025(RS)<br>
+                       <span class="text-warning">Job In Progress</span>
+                    </div>
+                    <small class="text-muted">1h ago</small>
+                  </a>
+                </div>
+                <div class="text-center p-2">
+                  <a href="<?php echo base_url('ClientsNotification');?>" class="btn btn-outline-primary btn-sm">View All Notifications</a>
+                </div>
+              </div>
+            </li>
+            <!-- Notification Dropdown End -->
+
+            <!-- Notification Dropdown End -->
 	      <li class="nav-item <?php if($uri=='ClientsAddNewJobs'){ echo "active";}?>">
 	        <a class="nav-link" href="<?php echo base_url('ClientsAddNewJobs');?>">
 	        	<i class="fa fa-folder-o"></i> New Job
@@ -157,7 +241,7 @@
 	        </a>
 	      </li>
 	    </ul>
-	    <div class="user <?php if($uri=='clientProfileInformation'){ echo "active";}?>"">
+	    <div class="user <?php if($uri=='clientProfileInformation'){ echo "active";}?>">
 	    	<a href="<?php echo base_url('clientProfileInformation');?>">
 	    		<i class="fa fa-user-o"></i>
 	    		Rahul Sinha
