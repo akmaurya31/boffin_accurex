@@ -35,35 +35,6 @@ class Notifications extends CI_Controller
     }
 
 
-    public function load_notifications222()
-    {
-        // Dummy client ID (replace with session or actual client ID logic)
-        $client_id = 1;
-
-        // Get page number from query string (default is 1)
-        $page = $this->input->get('page') ?? 1;
-        $limit = 20;
-        $offset = ($page - 1) * $limit;
-
-        // Get total notifications count for pagination
-        $total_notifications = $this->Notification_model->count_notifications_by_client($client_id);
-
-        // Get paginated notifications
-        $notifications = $this->Notification_model->get_notifications_by_client($client_id, $limit, $offset);
-
-        // Pass data to view
-        $data['notifications'] = $notifications;
-        $data['total_notifications'] = $total_notifications;
-        $data['current_page'] = $page;
-        $data['limit'] = $limit;
-
-        $this->load->view('Client_portal/ClientsNotification',$data);
-        // $this->load->view('notifications/index', $data); // ✅ Create this view
-    }
-    
-    
-    
-
     public function load_notifications()
 {
     // Dummy client ID (replace with session or actual client ID logic)
@@ -99,6 +70,9 @@ class Notifications extends CI_Controller
         $job->status_name = $status_details['status']; // Store the status
         $job->sub_status = $status_details['sub_status']; // Store the sub-status
         $job->badge_color = $status_details['badge_color']; // Store the badge color
+
+        $job->notifi_isread = ($job->is_read == 1) ? 'isread' : 'isunread';
+
     }
 
 
@@ -187,7 +161,11 @@ public function status_lookupall()
 }
 
 
-
-
+public function updateRead()
+{
+    $id = $this->input->post('id');
+    $this->db->where('id', $id)->update('job_notifications', ['is_read' => 1]);
+    echo json_encode(['status' => 'success']);
+}
     
 }

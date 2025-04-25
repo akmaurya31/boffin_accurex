@@ -15,23 +15,15 @@ class Notification_model extends CI_Model
      * @param int $offset     // from where to start (for pagination)
      * @return array
      */
-    public function get_notifications_by_client111($client_id, $limit = 20, $offset = 0)
-    {
-        $this->db->where('client_id', $client_id);
-        $this->db->order_by('created_at', 'DESC');
-        $this->db->limit($limit, $offset);
-        $query = $this->db->get('job_notifications');
-        return $query->result(); // returns an array of objects
-    }
-
 
     public function get_notifications_by_client($client_id, $limit = 20, $offset = 0)
     {
         // Main query to get notifications with job details
-        $this->db->select('job_notifications.*, joblist.*');
+        $this->db->select('job_notifications.id as notif_id, joblist.id as job_id,job_notifications.*, joblist.*');
         $this->db->from('job_notifications');
         $this->db->join('joblist', 'joblist.jobcode = job_notifications.jobcode', 'inner');
         $this->db->where('job_notifications.client_id', $client_id);
+        $this->db->order_by('job_notifications.is_read', 'ASC');
         $this->db->order_by('job_notifications.created_at', 'DESC');
         $this->db->limit($limit, $offset);
         $query = $this->db->get();

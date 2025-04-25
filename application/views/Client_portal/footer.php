@@ -1,3 +1,39 @@
+<script>
+
+
+$(document).on("click", ".isunread", function () {
+  var notifId = $(this).data("id"); // notification ID attribute se
+  $.ajax({
+    url: "<?= base_url('Notifications/updateRead'); ?>",
+    method: "POST",
+    data: { id: notifId },
+    success: function (response) {
+      console.log("Status updated:", response);
+      // Optional: UI ko update karo
+      // Example: class change + styling
+      $(`[data-id="${notifId}"]`)
+        .removeClass("isunread")
+        .addClass("isread")
+        .find(".status-text")
+        .text("isread");
+ 
+        let notifEl = document.getElementById("notif-count");
+        // Current value as number
+        let currentCount = parseInt(notifEl.innerText);
+        // Subtract 1, but never below 0
+        let newCount = Math.max(currentCount - 1, 0);
+        // Update in HTML
+        notifEl.innerText = newCount;
+
+        myAjaxNotify();
+    }
+  });
+});
+
+</script>
+
+
+
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 

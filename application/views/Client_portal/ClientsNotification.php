@@ -81,6 +81,10 @@
         font-size: 20px;
         color: #14264e;
     }
+
+
+    .isread{  background-color:rgb(214, 238, 227); }
+    .isunread{  background-color:rgb(242, 228, 228); }
     
 </style>
 <?php include('navigation.php');?>
@@ -105,6 +109,7 @@
                         <th width="80">Sr. No.</th>
                         <th>Job Heading</th>
                         <th width="180">Status</th>
+                        <th width="180">Sub status</th>
                         <th width="200">Date</th>
                         <!-- <th width="80">Read</th> -->
                     </tr>
@@ -178,10 +183,11 @@ function loadNotifications(page) {
         const statusHTML = renderStatusCell(notification.status);
 
         $('#notifications-table tbody').append(`
-          <tr class="ss">
+          <tr class="${notification.notifi_isread}"  data-id="${notification.notif_id}"> 
             <td>${(page - 1) * 20 + (index + 1)}</td>
-            <td>${notification.job_name}</td>
-            <td><span class="badge ${notification.badge_color}">${notification.status_name}</span></td>
+            <td>${notification.notif_id} ${notification.job_name}</td>
+            <td><span class="badge ${notification.badge_color}">${notification.status_name}  </span></td>
+            <td><span > ${notification.sub_status}</span></td>
             <td>${notification.created_at}</td>
           </tr>
         `);
@@ -215,5 +221,8 @@ $(document).ready(function () {
     loadNotifications(page);
   });
 });
+
+
+
 </script>
 <?php include('footer.php');?>

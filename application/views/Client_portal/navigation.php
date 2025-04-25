@@ -174,54 +174,13 @@
               <a class="nav-link dropdown-toggle position-relative" href="#" id="notifDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="fa fa-bell-o fa-lg"></i> Notifications
                 <span id="notif-count" class="badge badge-danger badge-pill" style="position: absolute; top: 0px; font-size: 12px; left: 15px;">
-                  5
+                  0
                 </span>
               </a>
               <div class="dropdown-menu dropdown-menu-right p-0 shadow-lg border-0 rounded-lg" aria-labelledby="notifDropdown" style="width: 350px;left: 0px;">
                 
                 <div id="notif-list" class="list-group list-group-flush">
-                  <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start hover-highlight">
-                    <div>
-                       Meena Kumari-PTR-05-04-2020(RS) <br>
-                       <span class="text-success">Job Completed</span>
-                    </div>
-                    <small class="text-muted">2m ago</small>
-                  </a>
-                  <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start hover-highlight">
-                    <div>
-                      Ravi Sharma-VAT-31-07-2020(RS)<br>
-                       <span class="text-danger">Job On Hold</span>
-                    </div>
-                    <small class="text-muted">15m ago</small>
-                  </a>
-                  <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start hover-highlight">
-                    <div>
-                      Anita Desai-OTH-20-04-2025(RS)<br>
-                       <span class="text-warning">Job In Progress</span>
-                    </div>
-                    <small class="text-muted">1h ago</small>
-                  </a>
-                  <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start hover-highlight">
-                    <div>
-                       Meena Kumari-PTR-05-04-2020(RS) <br>
-                       <span class="text-success">Job Completed</span>
-                    </div>
-                    <small class="text-muted">2m ago</small>
-                  </a>
-                  <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start hover-highlight">
-                    <div>
-                      Ravi Sharma-VAT-31-07-2020(RS)<br>
-                       <span class="text-danger">Job On Hold</span>
-                    </div>
-                    <small class="text-muted">15m ago</small>
-                  </a>
-                  <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start hover-highlight">
-                    <div>
-                      Anita Desai-OTH-20-04-2025(RS)<br>
-                       <span class="text-warning">Job In Progress</span>
-                    </div>
-                    <small class="text-muted">1h ago</small>
-                  </a>
+                   ---
                 </div>
                 <div class="text-center p-2">
                   <a href="<?php echo base_url('ClientsNotification');?>" class="btn btn-outline-primary btn-sm">View All Notifications</a>
@@ -256,7 +215,37 @@
 
 
 <script>
-  $(document).ready(function () {
+
+    function timeAgo22(dateStr) {
+      const now = new Date();
+      const date = new Date(dateStr);
+      const diff = Math.floor((now - date) / 60000); // in minutes
+      if (diff < 60) return `${diff}m ago`;
+      const hr = Math.floor(diff / 60);
+      if (hr < 24) return `${hr}h ago`;
+      // console.log(date.toLocaleDateString());
+      return date.toLocaleDateString();
+    }
+
+    function timeAgo(dateStr) {
+      const now = new Date();
+      const date = new Date(dateStr);
+      const seconds = Math.floor((now - date) / 1000);
+
+      if (seconds < 60) return 'Just now';
+      const minutes = Math.floor(seconds / 60);
+      if (minutes < 60) return `${minutes}m ago`;
+      const hours = Math.floor(minutes / 60);
+      if (hours < 24) return `${hours}h ago`;
+      const days = Math.floor(hours / 24);
+      if (days < 30) return `${days} day${days > 1 ? 's' : ''} ago`;
+      const months = Math.floor(days / 30);
+      if (months < 12) return `${months} month${months > 1 ? 's' : ''} ago`;
+      const years = Math.floor(months / 12);
+      return `${years} year${years > 1 ? 's' : ''} ago`;
+    }
+
+  function myAjaxNotify(){
     $.ajax({
       url: "<?php echo base_url('Notifications/load_notifications'); ?>",
       method: "GET",
@@ -267,11 +256,14 @@
         if (data.jobs.length === 0) {
           listHtml = '<span class="list-group-item text-muted">No notifications</span>';
         } else {
-          data.jobs.slice(0, 6).forEach(function (notif) {
+          data.jobs
+          .filter(notif => notif.notifi_isread === "isunread") // unread only
+          .slice(0, 6)
+          .forEach(function (notif) {
             listHtml += `
-              <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start hover-highlight">
+              <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start hover-highlight ${notif.notifi_isread}"  data-id="${notif.notif_id}">
                 <div>
-                  ${notif.job_name} <br>
+                ${notif.notif_id}   ${notif.job_name} <br>
                   <span class="text- badge ${notif.badge_color}">Job ${notif.status_name} >> ${notif.sub_status}</span>
                 </div>
                 <small class="text-muted">${timeAgo(notif.created_at)}</small>
@@ -282,16 +274,12 @@
         $('#notif-list').html(listHtml);
       }
     });
+  }
 
-    function timeAgo(dateStr) {
-      const now = new Date();
-      const date = new Date(dateStr);
-      const diff = Math.floor((now - date) / 60000); // in minutes
-      if (diff < 60) return `${diff}m ago`;
-      const hr = Math.floor(diff / 60);
-      if (hr < 24) return `${hr}h ago`;
-      // console.log(date.toLocaleDateString());
-      return date.toLocaleDateString();
-    }
+  $(document).ready(function () {
+
+    myAjaxNotify();
+
+    
   });
 </script>
