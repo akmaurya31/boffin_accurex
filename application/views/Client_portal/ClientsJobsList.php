@@ -276,24 +276,37 @@
 <!-- modal for send email-->
 <div class="modal fade" id="sendEmail" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog modal-lg modal-dialog-centered">
+   <?= form_open_multipart('jobCommentForm', ['class' => 'client-comment-form', 'autocomplete' => 'off','id'=>'jobCommentForm']); ?>
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Meena Kumari-PTR-05-04-2020(RS)</h4>
+                <h4 class="modal-title ktitle">--</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
         <div class="modal-body">
             <div class="form-group">
                 <label>Comments:</label>
-                <textarea class="form-control" name="sendEmail" rows="8"></textarea>
+                <textarea class="form-control kcomments" name="kcomments"  id="kcomments" rows="8"></textarea>
+                <input type="hidden" class="form-control" name="kjobcode" id="kjobcode" />
+            </div>
+            <div class="form-group">
+                    <label>Select Attachments <span></span></label>
+                    <!-- <input type="file" class="form-control" name="attachement[]"> -->
+                    <input type="file" class="form-control" name="attachments[]" multiple accept=".jpeg,.jpg,.png,.webp,.pdf,.doc,.docx,.xls,.xlsx">
+                    <span style="font-size: 13px; color: #f65d1f;">Total attachement size upto 100 MB</span>
+                    <br/>
+                    <span style="font-size: 13px; color: #f65d1f;">JPG,JPEG,PNG,XSLS,DOC,PDF,WEBP</span>
             </div>
         </div>
         <div class="modal-footer">
             <button type="submit" name="" class="btn btn-purple">Send Mail</button>
           <button type="button" class="btn btn-secondary dismiss" data-dismiss="modal">Close</button>
         </div>
+    <?= form_close(); ?>
       </div>
     </div>
 </div>
+
+
 
 <!--- End Send Email Box ----->
 <!-- start view job modfal -->
@@ -455,8 +468,25 @@ $(document).ready(function () {
                                 <td>${job.additional_comment}</td>
                                 <td class="actions">
                                     <a href="" class="btn btn-sm btn-search"><i class="fa fa-search"></i></a>
-                                    <a href="" class="btn btn-sm btn-send" data-toggle="modal" data-target="#sendEmail"><i class="fa fa-send"></i></a>
-                                    <a href="" class="btn btn-sm btn-folder" data-toggle="modal" data-target="#jobDetailModal"><i class="fa fa-eye"></i></a>
+                                    <a href="javascript:void(0);" 
+                                        class="btn btn-sm btn-send" 
+                                        data-toggle="modal" 
+                                        data-target="#sendEmail" 
+                                        data-jobcode="${job.jobcode}"
+                                        data-job_name="${job.job_name}"
+                                        onclick="fillJobName(this)">
+                                        <i class="fa fa-send"></i>
+                                        </a>
+
+                                    <a href="javascript:void(0);" 
+                                        class="btn btn-sm btn-folder" 
+                                        data-toggle="modal" 
+                                        data-target="#jobDetailModal" 
+                                        data-jobcode="${job.jobcode}"
+                                        data-job_name="${job.job_name}"
+                                        onclick="getJobDetails(this)">
+                                        <i class="fa fa-folder"></i>
+                                    </a>
                                 </td>
                             </tr>`;
                     });
@@ -522,12 +552,153 @@ $(document).ready(function () {
     });
 });
 
-
-
  
+function fillJobName(element) {
+    var jobName = $(element).data('job_name');
+    var jobCode = $(element).data('jobcode');
+    $('#kjobcode').val(jobCode);
+    // Modal ke andar kisi element me set karenge
+    $('.ktitle').text(jobName);
+}
+
+function getJobDetails(element) {
+    var jobName = $(element).data('job_name');
+    var jobCode = $(element).data('jobcode');
+    var base_url = "<?= base_url(); ?>";
+
+    $.ajax({
+        url: base_url + 'clients/get_job_details', // <-- Controller ka URL
+        type: 'GET',
+        data: { jobcode: jobCode },
+        dataType: 'json',
+        success: function(response) {
+            console.log(response);
+
+            // yahan apni modal me set karo details
+            // Example:
+            $('.modal-jobname').text(response.job.job_name);
+            $('.modal-jobcode').text(response.job.jobcode);
+
+            // checklist ko loop karke show karo
+            var checklistHTML = '';
+            if (response.checklist.length > 0) {
+                response.checklist.forEach(function(item) {
+                    checklistHTML += '<li>' + item.item_name + '</li>';
+                });
+            }
+            $('.modal-checklist').html(checklistHTML);
+
+            // attachments ko loop karke show karo
+            var attachmentHTML = '';
+            if (response.attachments.length > 0) {
+                response.attachments.forEach(function(file) {
+                    attachmentHTML += '<a href="' + file.file_path + '" target="_blank">View File</a><br>';
+                });
+            }
+            $('.modal-attachments').html(attachmentHTML);
+
+            // Ab Modal show karo
+            CshowPreviewModal(response);
+        },
+        error: function(xhr, status, error) {
+            console.error(error);
+        }
+    });
+}
+
+function CshowPreviewModal(rs) {
+  console.log(rs.job);
+    $('.m_assignment').text(rs.job.assignment_type);
+    $('.m_client').text(rs.job.client_name);
+    $('.m_person').text(rs.job.contact_person);
+    $('.m_email').text(rs.job.email_address);
+    $('.m_taxyear').text(rs.job.year_end);
+    $('.m_budget').text(rs.job.budgeted_hours);
+    $('.m_fee').text(rs.job.accountancy_fee_net);
+    $('.m_comments').text(rs.job.additional_comment);
+}
+
+function CshowPreviewModal1222(rs) {
+			// Extract just the bits you need
+			for (let [key, value] of rs.job) {
+				console.log(key, ":", value);
+			}
+
+			 // Group all checklists by assignment_type
+			
+
+			// console.log(checklistData,"checklistData"); 
+
+			const assignment = rs.get('assignment_type')      || '';
+			const client     = formData.get('client_name')          || '';
+			const person     = formData.get('contact_person')       || '';
+			const email      = formData.get('email_address')        || '';
+			const taxYearEnd = formData.get('tax_year_end')         || '';
+			const yearEnd    = formData.get('year_end')             || '';
+			const m_budget    = formData.get('budgeted_hours')             || '';
+			const m_fee    = formData.get('accountancy_fee_net')             || '';
+			const m_comments    = formData.get('additional_comment')             || '';
+			// …and so on for any other fields you want to preview
+
+			// Inject into your modal
+
+			// Mapping object
+			const assignmentTypeLabels = {
+			'year_end_account':    'Year End Account',
+			'bookkeeping':         'Bookkeeping / VAT',
+			'personal_tax_return': 'Personal Tax Return',
+			'other':               'Other'
+			};
+
+			const assignmentLabel = assignmentTypeLabels[assignment] || assignment;
+			
+			$('.m_assignment').text(assignmentLabel);
+			$('.m_client').text(client);
+			$('.m_person').text(person);
+			$('.m_email').text(email);
+			$('.m_taxyear').text(taxYearEnd);
+			$('.m_budget').text(m_budget);
+			$('.m_fee').text(m_fee);
+			$('.m_comments').text(m_comments);
+
+			const items = checklistData[assignment] || [];
+			const $tbody = $('.previewEmployement');
+			$tbody.empty();
+
+			const assignmentSort = {
+			'year_end_account':    'yea',
+			'bookkeeping':         'book',
+			'personal_tax_return': 'ptr',
+			'other':               'oth'
+			};
+
+			const assignmentLabelShort = assignmentSort[assignment] || assignment;
+
+			items.forEach((item, idx) => {
+				// Assuming your form field names are:
+				const textVal = formData.get(`${assignmentLabelShort}_employment_text_${item.sn}`) || '';
+				const val     = formData.get(`${assignmentLabelShort}_employment_${item.sn}`)      || '';
+				const finalval = val === 'on' ? 'Yes' : 'No';
+
+
+				$tbody.append(`
+				<tr>
+					<td width="50">${idx + 1}</td>
+					<td>${item.title}</td>
+					<td>${finalval}</td>
+					<td width="200">${textVal}</td>
+				</tr>
+				`);
+			});
+
+			multipleAttach(formData);
+
+			// Finally show the modal
+			$('#jobDetailModal').modal('show');
+}
+
+
 </script>
-
-
 
 
 

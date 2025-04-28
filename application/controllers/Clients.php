@@ -2,6 +2,8 @@
 
     class Clients extends CI_Controller
     {
+        public $attach_from = "newJob"; 
+
         public function __construct()
         {
             parent::__construct();
@@ -231,6 +233,7 @@
             // Insert to DB
             if (!empty($uploaded_files)) {
                 $this->load->model('Client_model');
+                $this->Client_model->attach_from = 'queryJob';
                 $this->Client_model->insert_job_attachments($uploaded_files);
                 // echo "Files uploaded successfully.";
             } else {
@@ -238,22 +241,6 @@
             }
         }
 
-
-        public function fetch_paginated_jobs2() {
-            $limit = $this->input->get('limit') ?? 20;
-            $page = $this->input->get('page') ?? 1;
-            $search = $this->input->get('search') ?? '';
-
-            $offset = ($page - 1) * $limit;
-
-            $jobs = $this->Client_model->get_filtered_jobs($limit, $offset, $search);
-            $total = $this->Client_model->count_filtered_jobs($search);
-
-            echo json_encode([
-                'jobs' => $jobs,
-                'total' => $total
-            ]);
-        }
 
         public function dashboard() {
             // Initial load pe 1st page ke 20 records dikhenge
@@ -342,11 +329,64 @@
             ]);
         }
 
-       
+
+        public function jobCommentForm()
+        {
+            $comments = $this->input->post('kcomments'); // Array of comments
+            $job_code = $this->input->post('kjobcode');
+            if ($comments) {
+                    $this->db->insert('job_query', [
+                        'comments' => $comments,
+                        'jobcode' => $job_code
+                    ]);
+            }
+                $this->upload_attachments($job_code); 
+                // foreach ($attachments as $attach) {
+                //     $this->db->insert('job_attachments', [
+                //         'job_code' => $job_code,
+                //         'file_path' => $attach['file_path'],
+                //         'attach_from' => "Query"
+                //     ]);
+                // }
+            // $this->load->view('Client_portal/ClientsJobsList',$data);
+            // Return response
+            echo json_encode(['status' => 'success', 'message' => 'Data inserted successfully']);
+        }
+
+        
 
         public function ClientsJobsList()
         {
             $this->load->view('Client_portal/ClientsJobsList',$data);
+        }
+
+        public function get_job_details()
+        {
+            $jobcode = $this->input->get('jobcode');
+
+            // Basic validation
+            if (empty($jobcode)) {
+                echo json_encode(['status' => 'error', 'message' => 'Jobcode missing']);
+                return;
+            }
+
+            // joblist table -> single record
+            $job = $this->db->where('jobcode', $jobcode)->get('joblist')->row_array();
+
+            // job_checklist table -> multiple records
+            $checklist = $this->db->where('jobcode', $jobcode)->get('job_checklist')->result_array();
+
+            // job_attachments table -> multiple records
+            $attachments = $this->db->where('job_code', $jobcode)->get('job_attachments')->result_array();
+
+            // Final output
+            $response = [
+                'job' => $job,
+                'checklist' => $checklist,
+                'attachments' => $attachments
+            ];
+
+            echo json_encode($response);
         }
         
         

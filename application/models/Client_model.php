@@ -44,6 +44,11 @@ class Client_model extends CI_Model {
 
     public function insert_job_attachments($data)
     {
+        //$data['attach_from'] = $this->attach_from;
+        foreach ($data as &$row) {
+            $row['attach_from'] = $this->attach_from;
+        }
+        // print_r($data); die("ASd");
         return $this->db->insert_batch('job_attachments', $data);
     }
 
@@ -111,33 +116,7 @@ class Client_model extends CI_Model {
     
         return $this->db->count_all_results();
     }
-
-
-    public function get_filtered_jobs222($limit, $offset, $code = '', $name = '') {
-        $this->db->select('jobcode, job_name');
-        $this->db->from('job_attachments');
-        if ($code) {
-            $this->db->like('jobcode', $code);
-        }
-        if ($name) {
-            $this->db->like('job_name', $name);
-        }
-        $this->db->order_by('id', 'DESC');
-        $this->db->limit($limit, $offset);
-        return $this->db->get()->result_array();
-    }
-    
-    public function count_filtered_jobs333($code = '', $name = '') {
-        $this->db->from('job_attachments');
-        if ($code) {
-            $this->db->like('jobcode', $code);
-        }
-        if ($name) {
-            $this->db->like('job_name', $name);
-        }
-        return $this->db->count_all_results();
-    }
-
+ 
     public function extra_get_filtered_jobs($limit, $offset, $filters, &$total = 0) {
         // Total count query (without limit)
         $this->db->from('joblist');

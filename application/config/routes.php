@@ -80,6 +80,9 @@ $route['ClientsJobsList']				= 'Clients/ClientsJobsList';
 $route['ClientsNotification']			= 'Notifications/ClientsNotification';
 $route['clientProfileInformation']		= 'Clients/clientProfileInformation';
 
+$route['jobCommentForm']		= 'Clients/jobCommentForm';
+$route['get_job_details']		= 'Clients/get_job_details';
+
 
 
 
