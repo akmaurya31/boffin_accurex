@@ -133,6 +133,7 @@
     }
 </style>
 <?php include('navigation.php');?>
+<div id="toast" class="toast-msg" style="display: none;">Form submitted successfully!</div>
 <div class="page-content">
   <!-- Breadcrumb -->
   <div class="container">
@@ -607,7 +608,6 @@ function getJobDetails(element) {
 }
 
 function CshowPreviewModal(rs) {
-  console.log(rs.job);
     $('.m_assignment').text(rs.job.assignment_type);
     $('.m_client').text(rs.job.client_name);
     $('.m_person').text(rs.job.contact_person);
@@ -616,90 +616,131 @@ function CshowPreviewModal(rs) {
     $('.m_budget').text(rs.job.budgeted_hours);
     $('.m_fee').text(rs.job.accountancy_fee_net);
     $('.m_comments').text(rs.job.additional_comment);
+    DisplayChecklist(rs)
+    multipleAttach(rs)
 }
 
-function CshowPreviewModal1222(rs) {
-			// Extract just the bits you need
-			for (let [key, value] of rs.job) {
-				console.log(key, ":", value);
+        function multipleAttach(rs){
+			let validAttachments = rs.attachments; // Get all file objects
+			const $tbodyattachmentView = $('.attachmentView');
+			$tbodyattachmentView.empty();
+
+			// let validAttachments = attachments.filter(file => {
+			// 	// Filter out invalid or empty files
+			// 	return file instanceof File && file.size > 0 && file.name;
+			// });
+
+			if (validAttachments.length === 0) {
+				// No valid attachments
+				$tbodyattachmentView.append(`
+					<tr>
+						<td colspan="3" class="text-center text-muted">No valid attachments found</td>
+					</tr>
+				`);
+			} else {
+				// Loop through valid files only
+               // console.log(validAttachments); die("ASda");
+ 
+				validAttachments.forEach(file => {
+                    const fileName = file.file_path.split('/').pop(); // Extract file name from file path
+                    const fileType = file.file_path.split('.').pop() || 'Unknown'; // Extract file extension as type
+                    // let FS=file.size || 0
+                    // const fileSize = (FS / (1024 * 1024)).toFixed(2) + ' MB'; // Convert size to MB
+                    // let filek=calculateSingleFileDetails(file);
+                    // console.log(filek);
+
+					$tbodyattachmentView.append(`
+						<tr>
+							<td>${fileName}</td>
+							<td>${fileType}</td>
+							<td>-</td>
+						</tr>
+					`);
+				});
 			}
 
-			 // Group all checklists by assignment_type
-			
-
-			// console.log(checklistData,"checklistData"); 
-
-			const assignment = rs.get('assignment_type')      || '';
-			const client     = formData.get('client_name')          || '';
-			const person     = formData.get('contact_person')       || '';
-			const email      = formData.get('email_address')        || '';
-			const taxYearEnd = formData.get('tax_year_end')         || '';
-			const yearEnd    = formData.get('year_end')             || '';
-			const m_budget    = formData.get('budgeted_hours')             || '';
-			const m_fee    = formData.get('accountancy_fee_net')             || '';
-			const m_comments    = formData.get('additional_comment')             || '';
-			// …and so on for any other fields you want to preview
-
-			// Inject into your modal
-
-			// Mapping object
-			const assignmentTypeLabels = {
-			'year_end_account':    'Year End Account',
-			'bookkeeping':         'Bookkeeping / VAT',
-			'personal_tax_return': 'Personal Tax Return',
-			'other':               'Other'
-			};
-
-			const assignmentLabel = assignmentTypeLabels[assignment] || assignment;
-			
-			$('.m_assignment').text(assignmentLabel);
-			$('.m_client').text(client);
-			$('.m_person').text(person);
-			$('.m_email').text(email);
-			$('.m_taxyear').text(taxYearEnd);
-			$('.m_budget').text(m_budget);
-			$('.m_fee').text(m_fee);
-			$('.m_comments').text(m_comments);
-
-			const items = checklistData[assignment] || [];
-			const $tbody = $('.previewEmployement');
-			$tbody.empty();
-
-			const assignmentSort = {
-			'year_end_account':    'yea',
-			'bookkeeping':         'book',
-			'personal_tax_return': 'ptr',
-			'other':               'oth'
-			};
-
-			const assignmentLabelShort = assignmentSort[assignment] || assignment;
-
-			items.forEach((item, idx) => {
-				// Assuming your form field names are:
-				const textVal = formData.get(`${assignmentLabelShort}_employment_text_${item.sn}`) || '';
-				const val     = formData.get(`${assignmentLabelShort}_employment_${item.sn}`)      || '';
-				const finalval = val === 'on' ? 'Yes' : 'No';
+		}
 
 
-				$tbody.append(`
-				<tr>
-					<td width="50">${idx + 1}</td>
-					<td>${item.title}</td>
-					<td>${finalval}</td>
-					<td width="200">${textVal}</td>
-				</tr>
-				`);
-			});
+        function DisplayChecklist(rs) {
+    const items = rs.checklists;
+    const dbitems = rs.checklist;
+    const $tbody = $('.previewEmployement');
+    $tbody.empty();
 
-			multipleAttach(formData);
+    const assignment = rs.job.assignment_type;
 
-			// Finally show the modal
-			$('#jobDetailModal').modal('show');
+    const assignmentSort = {
+        'year_end_account':    'yea',
+        'bookkeeping':         'book',
+        'personal_tax_return': 'ptr',
+        'other':               'oth'
+    };
+
+  
+    
+    Object.values(items).forEach((item, idx) => {
+        // Modify assignment_type if it's 'bookkeeping'
+
+        const assignmentLabelShort = assignmentSort[item.assignment_type] || assignment;
+
+        // item.assignment_type
+        let k  =`${assignmentLabelShort}_employment_${item.sn}`;
+
+        // if (item.assignment_type === 'bookkeeping') {
+        //     item.assignment_type = 'book_employment_';
+        // }
+
+        // Generate the key to search in dbitems
+      //  let k = `${item.assignment_type}${item.sn}`;
+        
+        // Find the corresponding item in dbitems
+        let bls = dbitems.find(dbItem => dbItem.checklist_id === k);
+        let finalval = 'No'; 
+        if (bls !== undefined) {
+            finalval = 'Yes';
+        }
+        // If bls is undefined, set finalval as 'No'
+        // const finalval = bls?.status === 'on' ? 'Yes' : 'No';
+
+        // If bls is not found, display a default message in the comment column
+        const checklistComment = bls?.checklist_comment || 'No comment';
+
+        // Append the row to the table
+        $tbody.append(`
+            <tr>
+                <td width="50">${idx + 1}</td>
+                <td>${item.title}</td>
+                <td>${finalval}</td>
+                <td width="200">${checklistComment}</td>
+            </tr>
+        `);
+    });
 }
 
 
+<?php if ($this->session->flashdata('success_message')): ?>
+    var toast = document.getElementById('toast');
+    toast.style.display = 'block';
+    setTimeout(function() {
+        toast.style.display = 'none';  // Hide after 3 seconds
+    }, 3000);
+<?php endif; ?>
 </script>
-
+<style>
+    .toast-msg {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        font-size: 16px;
+    }
+</style>
 
 
 <footer class="text-center py-3">

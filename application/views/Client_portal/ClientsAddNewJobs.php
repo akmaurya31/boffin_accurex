@@ -1045,39 +1045,6 @@
 
 		}
 
-		function multipleAttach222(formData){
-			// Get attachments from FormData
-			let attachments = formData.getAll('attachments[]'); // Use getAll() to get all File objects
-			// alert(attachments.length);
-
-			const $tbodyattachmentView = $('.attachmentView');
-			$tbodyattachmentView.empty();
-
-			if (attachments.length === 0) {
-			// If no files selected
-			$tbodyattachmentView.append(`
-				<tr>
-				<td colspan="3" class="text-center text-muted">No attachments found</td>
-				</tr>
-			`);
-			} else {
-			// Loop through each attachment
-			attachments.forEach(file => {
-				const fileName = file.name;
-				const fileType = file.type || 'Unknown';
-				const fileSize = (file.size / (1024 * 1024)).toFixed(2) + ' MB'; // Convert to MB
-
-				$tbodyattachmentView.append(`
-				<tr>
-					<td>${fileName}</td>
-					<td>${fileType}</td>
-					<td>${fileSize}</td>
-				</tr>
-				`);
-			});
-			}
-		}
-
 
 		function submitNewJob(formData) {
 			$('.customer-form-submiter').prop('disabled', true);

@@ -120,9 +120,15 @@ class Client_model extends CI_Model {
     public function extra_get_filtered_jobs($limit, $offset, $filters, &$total = 0) {
         // Total count query (without limit)
         $this->db->from('joblist');
-       
+        
         if (!empty($filters['search_code'])) {
-            $this->db->like('jobcode', $filters['search_code']);
+            $this->db->group_start();  
+            $this->db->or_like('jobcode', $filters['search_code']);
+            $this->db->or_like('client_name', $filters['search_code']);
+            $this->db->or_like('additional_comment', $filters['search_code']);
+            $this->db->or_like('status', $filters['search_code']);
+            $this->db->group_end();  
+
         }
         if (!empty($filters['search_name'])) {
             $this->db->like('job_name', $filters['search_name']);
@@ -144,7 +150,12 @@ class Client_model extends CI_Model {
         $this->db->from('joblist');
     
         if (!empty($filters['search_code'])) {
-            $this->db->like('jobcode', $filters['search_code']);
+            $this->db->group_start();  
+            $this->db->or_like('jobcode', $filters['search_code']);
+            $this->db->or_like('client_name', $filters['search_code']);
+            $this->db->or_like('additional_comment', $filters['search_code']);
+            $this->db->or_like('status', $filters['search_code']);
+            $this->db->group_end();  
         }
         if (!empty($filters['search_name'])) {
             $this->db->like('job_name', $filters['search_name']);

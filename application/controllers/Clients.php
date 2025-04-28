@@ -36,7 +36,7 @@
         public function ClientsAddNewJobs()
         {
             //  die("ASdfa");
-            $data='aa';
+            // $data='aa';
             $this->load->view('Client_portal/ClientsAddNewJobs',$data);
         }
 
@@ -330,7 +330,7 @@
         }
 
 
-        public function jobCommentForm()
+        public function jobCommentForm333()
         {
             $comments = $this->input->post('kcomments'); // Array of comments
             $job_code = $this->input->post('kjobcode');
@@ -348,10 +348,35 @@
                 //         'attach_from' => "Query"
                 //     ]);
                 // }
-            // $this->load->view('Client_portal/ClientsJobsList',$data);
+                // <div id="toast" class="toast-msg">Form submitted successfully!</div>
+            $this->load->view('Client_portal/ClientsJobsList',$data);
             // Return response
-            echo json_encode(['status' => 'success', 'message' => 'Data inserted successfully']);
+            // echo json_encode(['status' => 'success', 'message' => 'Data inserted successfully']);
         }
+
+        public function jobCommentForm()
+        {
+            $comments = $this->input->post('kcomments'); // Array of comments
+            $job_code = $this->input->post('kjobcode');
+            
+            if ($comments) {
+                // Insert the comment into the database
+                $this->db->insert('job_query', [
+                    'comments' => $comments,
+                    'jobcode' => $job_code
+                ]);
+                
+                // Set a flash message for success
+                $this->session->set_flashdata('success_message', 'Form submitted successfully!');
+            }
+
+            // Upload attachments
+            $this->upload_attachments($job_code);
+
+            // Load the view
+            $this->load->view('Client_portal/ClientsJobsList', $data);
+        }
+
 
         
 
@@ -379,17 +404,24 @@
             // job_attachments table -> multiple records
             $attachments = $this->db->where('job_code', $jobcode)->get('job_attachments')->result_array();
 
+            // Fetch all checklists using the helper function
+            $checklists = getAllChecklists();
+
+            $filteredChecklists = array_filter($checklists, function($checklist) use ($job) {
+                return $checklist['assignment_type'] == $job['assignment_type'];
+            });
+         
             // Final output
             $response = [
                 'job' => $job,
                 'checklist' => $checklist,
+                'checklists' => $filteredChecklists,
                 'attachments' => $attachments
             ];
-
             echo json_encode($response);
         }
-        
-        
+
+      
         
 
     }
